@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - New Drishti Library</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Payments Page Specific Styles */
+        .payments-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Wallet Card */
+        .wallet-card {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(30deg);
+        }
+
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wallet-header h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .wallet-amount {
+            text-align: right;
+        }
+
+        .wallet-amount .amount {
+            font-size: 42px;
+            font-weight: 700;
+            display: block;
+            line-height: 1;
+        }
+
+        .wallet-amount .wallet-status {
+            font-size: 14px;
+            opacity: 0.9;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Add Funds Section */
+        .add-funds-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #ffe680;
+        }
+
+        .add-funds-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .add-funds-header h3 {
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .amount-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .amount-option:hover {
+            border-color: #3498db;
+            background: white;
+        }
+
+        .amount-option.selected {
+            border-color: #27ae60;
+            background: #27ae60;
+            color: white;
+        }
+
+        .custom-amount {
+            margin-bottom: 20px;
+        }
+
+        .custom-amount input {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method-option:hover {
+            border-color: #3498db;
+            background: white;
+        }
+
+        .payment-method-option.selected {
+            border-color: #27ae60;
+            background: #d4edda;
+        }
+
+        .payment-method-icon {
+            font-size: 32px;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .payment-method-option.selected .payment-method-icon {
+            color: #27ae60;
+        }
+
+        .payment-method-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .payment-method-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* Transactions Section */
+        .transactions-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #ffe680;
+            margin-bottom: 30px;
+        }
+
+        .transactions-header {
+            background: linear-gradient(135deg, #fffdf6 0%, #fff9e6 100%);
+            padding: 20px 25px;
+            border-bottom: 2px solid #ffe680;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transactions-header h3 {
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .transactions-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .transactions-content {
+            padding: 0;
+        }
+
+        /* Transaction Item */
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .transaction-item:hover {
+            background: #f8f9fa;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 20px;
+        }
+
+        .transaction-icon.credit {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .transaction-icon.debit {
+            background: #f8d7da;
+            color: #e74c3c;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .transaction-info {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .transaction-date {
+            color: #bdc3c7;
+            font-size: 12px;
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .transaction-amount .amount {
+            font-size: 18px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .transaction-amount.credit .amount {
+            color: #27ae60;
+        }
+
+        .transaction-amount.debit .amount {
+            color: #e74c3c;
+        }
+
+        .transaction-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* No Transactions */
+        .no-transactions {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .no-transactions i {
+            font-size: 64px;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .no-transactions h4 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .no-transactions p {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        /* Payment Stats */
+        .payment-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .payment-stat {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #3498db;
+        }
+
+        .payment-stat .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .payment-stat .label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .payments-container {
+                padding: 10px;
+            }
+            
+            .wallet-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .wallet-amount {
+                text-align: center;
+            }
+            
+            .wallet-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .wallet-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .add-funds-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .quick-amounts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .payment-methods-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .transaction-icon {
+                margin-right: 0;
+                align-self: flex-start;
+            }
+            
+            .transaction-amount {
+                text-align: left;
+                width: 100%;
+            }
+            
+            .transactions-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .transactions-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-amounts {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .wallet-amount .amount {
+                font-size: 32px;
+            }
+        }
+
+        /* Buttons */
+        .btn-wallet {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-wallet:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-add-funds {
+            width: 100%;
+            padding: 18px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-add-funds:hover:not(:disabled) {
+            background: #219a52;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-add-funds:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <h2>New <span>Drishti</span></h2>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="student-dashboard.html">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="booking.html">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Book Seat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="booking-history.html">
+                            <i class="fas fa-history"></i>
+                            <span>Booking History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="payments.html">
+                            <i class="fas fa-wallet"></i>
+                            <span>Payments</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Payments & Wallet</h1>
+                    <p>Manage your wallet and payment transactions</p>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <img id="topBarAvatar" src="https://ui-avatars.com/api/?name=Student+User&background=3498db&color=fff" alt="User">
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name" id="topBarUserName">Student User</span>
+                                <span class="user-role">Student</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Content -->
+            <div class="dashboard-content">
+                <div class="payments-container">
+                    <!-- Payment Stats -->
+                    <div class="payment-stats">
+                        <div class="payment-stat">
+                            <span class="number" id="totalTransactions">0</span>
+                            <span class="label">Total Transactions</span>
+                        </div>
+                        <div class="payment-stat">
+                            <span class="number" id="successfulPayments">0</span>
+                            <span class="label">Successful Payments</span>
+                        </div>
+                        <div class="payment-stat">
+                            <span class="number" id="totalDeposits">₹0</span>
+                            <span class="label">Total Deposits</span>
+                        </div>
+                        <div class="payment-stat">
+                            <span class="number" id="totalSpent">₹0</span>
+                            <span class="label">Total Spent</span>
+                        </div>
+                    </div>
+
+                    <!-- Wallet Card -->
+                    <div class="wallet-card">
+                        <div class="wallet-header">
+                            <div>
+                                <h3>Wallet Balance</h3>
+                                <p>Available for booking payments</p>
+                            </div>
+                            <div class="wallet-amount">
+                                <span class="amount" id="walletBalance">₹0</span>
+                                <span class="wallet-status" id="walletStatus">No funds added yet</span>
+                            </div>
+                        </div>
+                        <div class="wallet-actions">
+                            <button class="btn-wallet" onclick="showAddFunds()">
+                                <i class="fas fa-plus"></i>
+                                Add Funds
+                            </button>
+                            <button class="btn-wallet" onclick="viewTransactionHistory()">
+                                <i class="fas fa-history"></i>
+                                Transaction History
+                            </button>
+                            <button class="btn-wallet" onclick="withdrawFunds()">
+                                <i class="fas fa-download"></i>
+                                Withdraw
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add Funds Section -->
+                    <div class="add-funds-section" id="addFundsSection" style="display: none;">
+                        <div class="add-funds-header">
+                            <h3>Add Funds to Wallet</h3>
+                            <button class="btn btn-secondary" onclick="hideAddFunds()">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                        </div>
+                        
+                        <div class="quick-amounts">
+                            <div class="amount-option" data-amount="100" onclick="selectAmount(100)">₹100</div>
+                            <div class="amount-option" data-amount="200" onclick="selectAmount(200)">₹200</div>
+                            <div class="amount-option" data-amount="500" onclick="selectAmount(500)">₹500</div>
+                            <div class="amount-option" data-amount="1000" onclick="selectAmount(1000)">₹1000</div>
+                            <div class="amount-option" data-amount="2000" onclick="selectAmount(2000)">₹2000</div>
+                        </div>
+                        
+                        <div class="custom-amount">
+                            <label>Or enter custom amount</label>
+                            <input type="number" id="customAmount" class="form-control" placeholder="Enter amount" min="10" max="10000" oninput="selectCustomAmount()">
+                        </div>
+                        
+                        <h4>Select Payment Method</h4>
+                        <div class="payment-methods-grid">
+                            <div class="payment-method-option" data-method="upi" onclick="selectPaymentMethod('upi')">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="payment-method-name">UPI</div>
+                                <div class="payment-method-desc">Instant transfer</div>
+                            </div>
+                            
+                            <div class="payment-method-option" data-method="card" onclick="selectPaymentMethod('card')">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="payment-method-name">Credit/Debit Card</div>
+                                <div class="payment-method-desc">Visa, Mastercard, RuPay</div>
+                            </div>
+                            
+                            <div class="payment-method-option" data-method="netbanking" onclick="selectPaymentMethod('netbanking')">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="payment-method-name">Net Banking</div>
+                                <div class="payment-method-desc">All major banks</div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-add-funds" id="addFundsBtn" disabled onclick="processPayment()">
+                            <i class="fas fa-lock"></i>
+                            Add ₹<span id="selectedAmount">0</span> to Wallet
+                        </button>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="transactions-section">
+                        <div class="transactions-header">
+                            <h3>Recent Transactions</h3>
+                            <div class="transactions-actions">
+                                <div class="filter-group">
+                                    <select class="filter-select" id="transactionFilter" onchange="filterTransactions()">
+                                        <option value="all">All Transactions</option>
+                                        <option value="credit">Deposits</option>
+                                        <option value="debit">Payments</option>
+                                        <option value="success">Successful</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                </div>
+                                <button class="btn-export" onclick="exportTransactions()">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="transactions-content">
+                            <div id="transactionsList">
+                                <!-- Transactions will be populated by JavaScript -->
+                                <div class="no-transactions">
+                                    <i class="fas fa-receipt"></i>
+                                    <h4>No transactions yet</h4>
+                                    <p>Your transaction history will appear here once you start making payments.</p>
+                                    <button class="btn btn-primary" onclick="showAddFunds()">
+                                        <i class="fas fa-plus"></i>
+                                        Add Funds
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Processing Payment</h3>
+            </div>
+            <div class="modal-body">
+                <div id="paymentContent">
+                    <!-- Payment content will be populated based on method -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirmPaymentBtn" onclick="confirmPayment()">Confirm Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPI Payment Modal -->
+    <div class="modal" id="upiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>UPI Payment</h3>
+                <button class="modal-close" onclick="closeUpiModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-instructions">
+                    <p>Send ₹<span id="upiAmount">0</span> to the following UPI ID:</p>
+                    <div class="upi-id-display">
+                        <strong>newdrishtilibrary@upi</strong>
+                        <button class="btn-copy" onclick="copyUpiId()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="note">After payment, click 'I have paid' below</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUpiModal()">Cancel</button>
+                <button class="btn btn-success" onclick="verifyUpiPayment()">
+                    <i class="fas fa-check"></i>
+                    I have paid
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Operation completed successfully!</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p id="loadingText">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjKGiYrqK1TlBi0N4aFHEi2WNZdnPy3s8",
+            authDomain: "library-7abcc-f1a9d.firebaseapp.com",
+            projectId: "library-7abcc-f1a9d",
+            storageBucket: "library-7abcc-f1a9d.firebasestorage.app",
+            messagingSenderId: "861023989601",
+            appId: "1:861023989601:web:795656dddb6e0795f05f20"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Firebase collections
+        const firebaseCollections = {
+            USERS: "users",
+            BOOKINGS: "bookings",
+            PAYMENTS: "payments",
+            TRANSACTIONS: "transactions"
+        };
+
+        // Make globally available
+        window.auth = auth;
+        window.db = db;
+        window.storage = storage;
+        window.firebaseCollections = firebaseCollections;
+    </script>
+
+    <!-- Payments JavaScript -->
+    <script>
+        let currentUser = null;
+        let userData = null;
+        let transactions = [];
+        let selectedAmount = 0;
+        let selectedPaymentMethod = '';
+        let currentPaymentData = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Payments page loaded');
+            initializePayments();
+            setupEventListeners();
+        });
+
+        function initializePayments() {
+            // Check if user is logged in
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update top bar
+            updateTopBar();
+            
+            // Load user data and transactions
+            loadUserData();
+            loadTransactions();
+        }
+
+        function setupEventListeners() {
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logoutUser();
+                });
+            }
+
+            // Settings button
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showNotification('Settings page is under development', 'info');
+                });
+            }
+        }
+
+        function updateTopBar() {
+            if (currentUser) {
+                document.getElementById('topBarUserName').textContent = currentUser.name || 'Student User';
+                if (currentUser.photoURL) {
+                    document.getElementById('topBarAvatar').src = currentUser.photoURL;
+                }
+            }
+        }
+
+        async function loadUserData() {
+            try {
+                const userDoc = await db.collection(firebaseCollections.USERS).doc(currentUser.uid).get();
+                
+                if (userDoc.exists) {
+                    userData = userDoc.data();
+                    updateWalletDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function updateWalletDisplay() {
+            const walletBalance = userData?.walletBalance || 0;
+            document.getElementById('walletBalance').textContent = `₹${walletBalance}`;
+            
+            if (walletBalance === 0) {
+                document.getElementById('walletStatus').textContent = 'No funds added yet';
+            } else if (walletBalance < 100) {
+                document.getElementById('walletStatus').textContent = 'Low balance';
+            } else {
+                document.getElementById('walletStatus').textContent = 'Balance available';
+            }
+        }
+
+        async function loadTransactions() {
+            try {
+                showLoading(true, 'Loading transactions...');
+                
+                const transactionsSnapshot = await db.collection(firebaseCollections.TRANSACTIONS)
+                    .where('userId', '==', currentUser.uid)
+                    .orderBy('timestamp', 'desc')
+                    .limit(50)
+                    .get();
+
+                transactions = [];
+                transactionsSnapshot.forEach(doc => {
+                    const transaction = doc.data();
+                    transaction.id = doc.id;
+                    transactions.push(transaction);
+                });
+
+                displayTransactions();
+                updatePaymentStats();
+
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showNotification('Error loading transactions', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayTransactions() {
+            const transactionsList = document.getElementById('transactionsList');
+            const filter = document.getElementById('transactionFilter').value;
+
+            let filteredTransactions = transactions;
+            if (filter !== 'all') {
+                filteredTransactions = transactions.filter(transaction => {
+                    if (filter === 'credit') return transaction.type === 'credit';
+                    if (filter === 'debit') return transaction.type === 'debit';
+                    if (filter === 'success') return transaction.status === 'success';
+                    if (filter === 'pending') return transaction.status === 'pending';
+                    return true;
+                });
+            }
+
+            if (filteredTransactions.length === 0) {
+                transactionsList.innerHTML = `
+                    <div class="no-transactions">
+                        <i class="fas fa-receipt"></i>
+                        <h4>No transactions found</h4>
+                        <p>No transactions match your current filter.</p>
+                        <button class="btn btn-secondary" onclick="resetTransactionFilter()">
+                            Clear Filter
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let transactionsHTML = '';
+            filteredTransactions.forEach(transaction => {
+                const timestamp = transaction.timestamp?.toDate() || new Date();
+                const isCredit = transaction.type === 'credit';
+                
+                transactionsHTML += `
+                    <div class="transaction-item">
+                        <div class="transaction-icon ${isCredit ? 'credit' : 'debit'}">
+                            <i class="fas ${isCredit ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${transaction.description}</div>
+                            <div class="transaction-info">
+                                ${transaction.paymentMethod ? `Via ${formatPaymentMethod(transaction.paymentMethod)} • ` : ''}
+                                ${transaction.transactionId ? `TXN: ${transaction.transactionId.slice(-8)}` : ''}
+                            </div>
+                            <div class="transaction-date">${formatDateTime(timestamp)}</div>
+                            <span class="transaction-status status-${transaction.status}">
+                                ${transaction.status}
+                            </span>
+                        </div>
+                        <div class="transaction-amount ${isCredit ? 'credit' : 'debit'}">
+                            <span class="amount">${isCredit ? '+' : '-'}₹${transaction.amount}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            transactionsList.innerHTML = transactionsHTML;
+        }
+
+        function updatePaymentStats() {
+            const totalTransactions = transactions.length;
+            const successfulPayments = transactions.filter(t => t.status === 'success').length;
+            const totalDeposits = transactions
+                .filter(t => t.type === 'credit' && t.status === 'success')
+                .reduce((sum, t) => sum + t.amount, 0);
+            const totalSpent = transactions
+                .filter(t => t.type === 'debit' && t.status === 'success')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            document.getElementById('successfulPayments').textContent = successfulPayments;
+            document.getElementById('totalDeposits').textContent = `₹${totalDeposits}`;
+            document.getElementById('totalSpent').textContent = `₹${totalSpent}`;
+        }
+
+        function filterTransactions() {
+            displayTransactions();
+        }
+
+        function resetTransactionFilter() {
+            document.getElementById('transactionFilter').value = 'all';
+            displayTransactions();
+        }
+
+        // Add Funds Functions
+        function showAddFunds() {
+            document.getElementById('addFundsSection').style.display = 'block';
+            resetAmountSelection();
+        }
+
+        function hideAddFunds() {
+            document.getElementById('addFundsSection').style.display = 'none';
+            resetAmountSelection();
+        }
+
+        function selectAmount(amount) {
+            // Remove selection from all amount options
+            document.querySelectorAll('.amount-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked option
+            event.target.classList.add('selected');
+            
+            selectedAmount = amount;
+            document.getElementById('customAmount').value = '';
+            updateAddFundsButton();
+        }
+
+        function selectCustomAmount() {
+            const customAmount = parseInt(document.getElementById('customAmount').value) || 0;
+            
+            if (customAmount >= 10 && customAmount <= 10000) {
+                // Remove selection from quick amounts
+                document.querySelectorAll('.amount-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                selectedAmount = customAmount;
+                updateAddFundsButton();
+            } else {
+                selectedAmount = 0;
+                updateAddFundsButton();
+            }
+        }
+
+        function selectPaymentMethod(method) {
+            // Remove selection from all payment methods
+            document.querySelectorAll('.payment-method-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked method
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+            
+            selectedPaymentMethod = method;
+            updateAddFundsButton();
+        }
+
+        function updateAddFundsButton() {
+            const addFundsBtn = document.getElementById('addFundsBtn');
+            const selectedAmountSpan = document.getElementById('selectedAmount');
+            
+            selectedAmountSpan.textContent = selectedAmount;
+            
+            if (selectedAmount > 0 && selectedPaymentMethod) {
+                addFundsBtn.disabled = false;
+            } else {
+                addFundsBtn.disabled = true;
+            }
+        }
+
+        function resetAmountSelection() {
+            selectedAmount = 0;
+            selectedPaymentMethod = '';
+            document.querySelectorAll('.amount-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelectorAll('.payment-method-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('customAmount').value = '';
+            updateAddFundsButton();
+        }
+
+        function processPayment() {
+            if (selectedAmount === 0 || !selectedPaymentMethod) {
+                showNotification('Please select amount and payment method', 'error');
+                return;
+            }
+
+            currentPaymentData = {
+                amount: selectedAmount,
+                method: selectedPaymentMethod,
+                timestamp: new Date(),
+                type: 'credit',
+                description: `Wallet top-up via ${formatPaymentMethod(selectedPaymentMethod)}`,
+                status: 'pending'
+            };
+
+            if (selectedPaymentMethod === 'upi') {
+                showUpiPayment();
+            } else {
+                showPaymentModal();
+            }
+        }
+
+        function showUpiPayment() {
+            document.getElementById('upiAmount').textContent = selectedAmount;
+            document.getElementById('upiModal').classList.add('active');
+        }
+
+        function closeUpiModal() {
+            document.getElementById('upiModal').classList.remove('active');
+        }
+
+        function copyUpiId() {
+            navigator.clipboard.writeText('newdrishtilibrary@upi').then(() => {
+                showNotification('UPI ID copied to clipboard', 'success');
+            });
+        }
+
+        function showPaymentModal() {
+            const paymentContent = document.getElementById('paymentContent');
+            let content = '';
+            
+            switch(selectedPaymentMethod) {
+                case 'card':
+                    content = `
+                        <div class="payment-form">
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="text" class="form-control" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <input type="text" class="form-control" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Card Holder Name</label>
+                                <input type="text" class="form-control" placeholder="John Doe">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'netbanking':
+                    content = `
+                        <div class="payment-form">
+                            <div class="form-group">
+                                <label>Select Bank</label>
+                                <select class="form-control">
+                                    <option value="">Select your bank</option>
+                                    <option value="sbi">State Bank of India</option>
+                                    <option value="hdfc">HDFC Bank</option>
+                                    <option value="icici">ICICI Bank</option>
+                                    <option value="axis">Axis Bank</option>
+                                    <option value="pnb">Punjab National Bank</option>
+                                </select>
+                            </div>
+                            <p class="note">You will be redirected to your bank's secure payment page.</p>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            paymentContent.innerHTML = content;
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        async function confirmPayment() {
+            try {
+                showLoading(true, 'Processing payment...');
+                
+                // Simulate payment processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Generate transaction ID
+                const transactionId = 'TXN' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
+                
+                // Update payment data
+                currentPaymentData.status = 'success';
+                currentPaymentData.transactionId = transactionId;
+                currentPaymentData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                
+                // Save transaction to Firestore
+                await db.collection(firebaseCollections.TRANSACTIONS).add({
+                    ...currentPaymentData,
+                    userId: currentUser.uid
+                });
+                
+                // Update user's wallet balance
+                const newBalance = (userData.walletBalance || 0) + selectedAmount;
+                await db.collection(firebaseCollections.USERS).doc(currentUser.uid).update({
+                    walletBalance: newBalance
+                });
+                
+                // Update local data
+                userData.walletBalance = newBalance;
+                
+                // Close modals and reset
+                closePaymentModal();
+                closeUpiModal();
+                hideAddFunds();
+                
+                // Reload data
+                await loadTransactions();
+                updateWalletDisplay();
+                
+                showNotification(`₹${selectedAmount} added to wallet successfully!`, 'success');
+                
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                showNotification('Payment failed. Please try again.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function verifyUpiPayment() {
+            await confirmPayment();
+        }
+
+        function viewTransactionHistory() {
+            // Scroll to transactions section
+            document.getElementById('transactionsList').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function withdrawFunds() {
+            showNotification('Withdrawal feature will be available soon', 'info');
+        }
+
+        function exportTransactions() {
+            showNotification('Export feature will be available soon', 'info');
+        }
+
+        // Utility functions
+        function formatPaymentMethod(method) {
+            const methods = {
+                'upi': 'UPI',
+                'card': 'Card',
+                'netbanking': 'Net Banking'
+            };
+            return methods[method] || method;
+        }
+
+        function formatDateTime(date) {
+            return date.toLocaleDateString('en-IN') + ' ' + date.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('currentUser');
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error('Logout error:', error);
+                });
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = 'notification show';
+            
+            if (type === 'success') {
+                notification.classList.add('success');
+            } else if (type === 'error') {
+                notification.classList.add('error');
+            } else {
+                notification.classList.remove('success', 'error');
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        function showLoading(show, text = 'Loading...') {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            
+            loadingText.textContent = text;
+            
+            if (show) {
+                loadingOverlay.classList.add('active');
+            } else {
+                loadingOverlay.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Drishti Library - Book Your Study Seat</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- In ALL your HTML files (signup.html, login.html, etc.) -->
+
+</head>
+<body>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <h1>New <span>Drishti</span> Library</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#slots">Time Slots</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-login">Login</a>
+                <a href="signup.html" class="btn btn-register">Register</a>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Book Your Study Seat at New Drishti Library</h2>
+            <p>With 170+ comfortable seats, high-speed Wi-Fi, and 24/7 availability, we provide the perfect environment for focused studying and academic success.</p>
+            <a href="login.html" class="btn-hero">Book Your Seat Now</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose New Drishti Library?</h2>
+                <p>We provide the perfect environment for focused studying and academic success</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <h3>High-Speed Wi-Fi</h3>
+                    <p>Uninterrupted internet connectivity for all your research and study needs</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <h3>170+ Comfortable Seats</h3>
+                    <p>Ergonomic seating designed for long study sessions with proper back support</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>24/7 Availability</h3>
+                    <p>Study anytime that fits your schedule with our round-the-clock operation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>Charging Ports</h3>
+                    <p>Convenient charging stations at every seat for your devices</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <h3>Refreshment Area</h3>
+                    <p>Tea, coffee, and snacks available to keep you energized during study sessions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Environment</h3>
+                    <p>CCTV surveillance and secure lockers for your belongings</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Time Slots Section -->
+    <section class="time-slots" id="slots">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Time Slots & Pricing</h2>
+                <p>Choose the slot that best fits your study schedule</p>
+            </div>
+            <div class="slots-grid">
+                <div class="slot-card">
+                    <h3>Morning Slot</h3>
+                    <p>8:00 AM - 2:00 PM</p>
+                    <div class="slot-price">₹600</div>
+                    <ul class="slot-features">
+                        <li><i class="fas fa-check"></i> 6 hours of study time</li>
+                        <li><i class="fas fa-check"></i> Wi-Fi included</li>
+                        <li><i class="fas fa-check"></i> Refreshment access</li>
+                    </ul>
+                </div>
+                <div class="slot-card">
+                    <h3>Evening Slot</h3>
+                    <p>2:00 PM - 8:00 PM</p>
+                    <div class="slot-price">₹600</div>
+                    <ul class="slot-features">
+                        <li><i class="fas fa-check"></i> 6 hours of study time</li>
+                        <li><i class="fas fa-check"></i> Wi-Fi included</li>
+                        <li><i class="fas fa-check"></i> Refreshment access</li>
+                    </ul>
+                </div>
+                <div class="slot-card">
+                    <h3>Full Day</h3>
+                    <p>8:00 AM - 8:00 PM</p>
+                    <div class="slot-price">₹800</div>
+                    <ul class="slot-features">
+                        <li><i class="fas fa-check"></i> 12 hours of study time</li>
+                        <li><i class="fas fa-check"></i> Wi-Fi included</li>
+                        <li><i class="fas fa-check"></i> Refreshment access</li>
+                        <li><i class="fas fa-check"></i> Locker facility</li>
+                    </ul>
+                </div>
+                <div class="slot-card">
+                    <h3>Night Slot</h3>
+                    <p>8:00 PM - 8:00 AM</p>
+                    <div class="slot-price">₹700</div>
+                    <ul class="slot-features">
+                        <li><i class="fas fa-check"></i> 12 hours of study time</li>
+                        <li><i class="fas fa-check"></i> Wi-Fi included</li>
+                        <li><i class="fas fa-check"></i> Refreshment access</li>
+                        <li><i class="fas fa-check"></i> Special quiet zone</li>
+                    </ul>
+                </div>
+                <div class="slot-card">
+                    <h3>24 Hours</h3>
+                    <p>Full Day & Night</p>
+                    <div class="slot-price">₹1200</div>
+                    <ul class="slot-features">
+                        <li><i class="fas fa-check"></i> 24 hours of study time</li>
+                        <li><i class="fas fa-check"></i> Wi-Fi included</li>
+                        <li><i class="fas fa-check"></i> Unlimited refreshments</li>
+                        <li><i class="fas fa-check"></i> Locker facility</li>
+                        <li><i class="fas fa-check"></i> Priority seating</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>What Our Students Say</h2>
+                <p>Hear from students who have achieved academic success at New Drishti Library</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "The 24-hour facility at New Drishti Library has been a game-changer for my exam preparation. The environment is perfect for focused studying."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RK</div>
+                        <div class="author-info">
+                            <h4>Rahul Kumar</h4>
+                            <p>Medical Aspirant</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "I love the flexible time slots. As a college student, I can choose sessions that fit my class schedule. The Wi-Fi is super fast too!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <h4>Priya Singh</h4>
+                            <p>Engineering Student</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "The night slot is perfect for me. It's quiet, comfortable, and the staff is always helpful. Highly recommended for serious students!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AS</div>
+                        <div class="author-info">
+                            <h4>Amit Sharma</h4>
+                            <p>UPSC Aspirant</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3>New Drishti Library</h3>
+                    <p>Your perfect study destination with 170+ comfortable seats, high-speed Wi-Fi, and 24/7 availability.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#slots">Time Slots</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Time Slots</h3>
+                    <ul>
+                        <li><a href="login.html">Morning (8AM-2PM)</a></li>
+                        <li><a href="login.html">Evening (2PM-8PM)</a></li>
+                        <li><a href="login.html">Full Day (8AM-8PM)</a></li>
+                        <li><a href="login.html">Night (8PM-8AM)</a></li>
+                        <li><a href="login.html">24 Hours</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Mohalla Durgaprasad, Near Janta Technical Inter College, Bisalpur, Pilibhit - 262201</li>
+                        <li><i class="fas fa-phone"></i> +91 6394468584 | 9557336718
+                        </li>
+                        <li><i class="fas fa-envelope"></i> info@newdrishtilibrary.com</li>
+                        <li><i class="fas fa-clock"></i> Open 24/7</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 New Drishti Library. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

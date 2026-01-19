@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - New Drishti Library</title>
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- In ALL your HTML files (signup.html, login.html, etc.) -->
+
+</head>
+<body>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container admin-dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <h2>New <span>Drishti</span> Admin</h2>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li class="active">
+                        <a href="#" data-tab="dashboard">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="bookings">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Bookings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="users">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="payments">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Payments</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="reports">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Admin Dashboard</h1>
+                    <span class="current-date" id="currentDate"></span>
+                </div>
+                <div class="top-bar-right">
+                    <div class="admin-controls">
+                        <button class="btn-refresh" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
+                        </button>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search...">
+                        </div>
+                    </div>
+                    <div class="user-menu">
+                        <div class="notification-bell">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-count">3</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <img src="" alt="Admin" class="user-avatar">
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">Admin User</span>
+                                <span class="user-role">Administrator</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Dashboard Tab -->
+                <div class="tab-content active" id="dashboardTab">
+                    <!-- Stats Overview -->
+                    <div class="stats-overview">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="totalStudents">0</h3>
+                                    <p>Total Students</p>
+                                    <span class="stat-trend up">+12% this month</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="totalBookings">0</h3>
+                                    <p>Monthly Bookings</p>
+                                    <span class="stat-trend up">+8% this month</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="totalRevenue">₹0</h3>
+                                    <p>Monthly Revenue</p>
+                                    <span class="stat-trend up">+15% this month</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-chair"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="seatOccupancy">0%</h3>
+                                    <p>Seat Occupancy</p>
+                                    <div class="occupancy-bar">
+                                        <div class="occupancy-bar-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats Row -->
+                    <div class="quick-stats-row">
+                        <div class="quick-stat">
+                            <div class="quick-stat-icon today">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="quick-stat-info">
+                                <h4 id="todayBookings">0</h4>
+                                <p>Today's Bookings</p>
+                            </div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-icon revenue">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="quick-stat-info">
+                                <h4 id="todayRevenue">₹0</h4>
+                                <p>Today's Revenue</p>
+                            </div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-icon users">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="quick-stat-info">
+                                <h4 id="newUsers">0</h4>
+                                <p>New Users Today</p>
+                            </div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-icon available">
+                                <i class="fas fa-chair"></i>
+                            </div>
+                            <div class="quick-stat-info">
+                                <h4 id="availableSeats">170</h4>
+                                <p>Available Seats</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Grid -->
+                    <div class="content-grid">
+                        <!-- Recent Bookings -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Recent Bookings</h3>
+                                <div class="card-actions">
+                                    <select id="dateFilter" class="filter-select">
+                                        <option value="today">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                        <option value="all">All Time</option>
+                                    </select>
+                                    <button class="btn-export" id="exportBookings">
+                                        <i class="fas fa-download"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Phone</th>
+                                                <th>Date</th>
+                                                <th>Time Slot</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentBookingsBody">
+                                            <!-- Bookings will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Revenue Chart -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Revenue Overview</h3>
+                                <div class="card-actions">
+                                    <button class="btn-export" id="exportRevenue">
+                                        <i class="fas fa-download"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <canvas id="revenueChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Payments -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Recent Payments</h3>
+                                <div class="card-actions">
+                                    <button class="btn-export" id="exportPayments">
+                                        <i class="fas fa-download"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Booking ID</th>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Method</th>
+                                                <th>Status</th>
+                                                <th>Transaction ID</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentPaymentsBody">
+                                            <!-- Payments will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Overview -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>System Overview</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="system-stats">
+                                    <div class="system-stat">
+                                        <div class="system-stat-icon">
+                                            <i class="fas fa-database"></i>
+                                        </div>
+                                        <div class="system-stat-info">
+                                            <h4>2.5 GB</h4>
+                                            <p>Storage Used</p>
+                                        </div>
+                                    </div>
+                                    <div class="system-stat">
+                                        <div class="system-stat-icon">
+                                            <i class="fas fa-server"></i>
+                                        </div>
+                                        <div class="system-stat-info">
+                                            <h4>99.8%</h4>
+                                            <p>Uptime</p>
+                                        </div>
+                                    </div>
+                                    <div class="system-stat">
+                                        <div class="system-stat-icon">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div class="system-stat-info">
+                                            <h4>Secure</h4>
+                                            <p>System Status</p>
+                                        </div>
+                                    </div>
+                                    <div class="system-stat">
+                                        <div class="system-stat-icon">
+                                            <i class="fas fa-sync"></i>
+                                        </div>
+                                        <div class="system-stat-info">
+                                            <h4>Updated</h4>
+                                            <p>Last Backup: Today</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Tab -->
+                <div class="tab-content" id="bookingsTab">
+                    <div class="tab-header">
+                        <h2>Bookings Management</h2>
+                        <p>Manage all library bookings and reservations</p>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Bookings</h3>
+                            <div class="card-actions">
+                                <div class="filter-group">
+                                    <select class="filter-select">
+                                        <option value="all">All Status</option>
+                                        <option value="confirmed">Confirmed</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                    <input type="date" class="filter-date">
+                                </div>
+                                <button class="btn-export" id="exportAllBookings">
+                                    <i class="fas fa-download"></i>
+                                    Export All
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="bookings-list" id="allBookingsList">
+                                <!-- Bookings will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div class="tab-content" id="usersTab">
+                    <div class="tab-header">
+                        <h2>Users Management</h2>
+                        <p>Manage student accounts and profiles</p>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Users</h3>
+                            <div class="card-actions">
+                                <div class="filter-group">
+                                    <select class="filter-select">
+                                        <option value="all">All Users</option>
+                                        <option value="active">Active</option>
+                                        <option value="new">New This Month</option>
+                                    </select>
+                                    <input type="text" placeholder="Search users..." class="search-input">
+                                </div>
+                                <button class="btn-export" id="exportAllUsers">
+                                    <i class="fas fa-download"></i>
+                                    Export All
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="users-list" id="allUsersList">
+                                <!-- Users will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments Tab -->
+                <div class="tab-content" id="paymentsTab">
+                    <div class="tab-header">
+                        <h2>Payments Management</h2>
+                        <p>Monitor and manage all payment transactions</p>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Payments</h3>
+                            <div class="card-actions">
+                                <div class="filter-group">
+                                    <select class="filter-select">
+                                        <option value="all">All Payments</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="failed">Failed</option>
+                                    </select>
+                                    <input type="date" class="filter-date">
+                                </div>
+                                <button class="btn-export" id="exportAllPayments">
+                                    <i class="fas fa-download"></i>
+                                    Export All
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="payments-list" id="allPaymentsList">
+                                <!-- Payments will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div class="tab-content" id="reportsTab">
+                    <div class="tab-header">
+                        <h2>Reports & Analytics</h2>
+                        <p>Generate detailed reports and analytics</p>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Daily Report</h3>
+                                <span class="report-date" id="dailyReportDate"></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="report-stats">
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="dailyBookings">0</h4>
+                                            <p>Bookings Today</p>
+                                        </div>
+                                    </div>
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-rupee-sign"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="dailyRevenue">₹0</h4>
+                                            <p>Revenue Today</p>
+                                        </div>
+                                    </div>
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="dailyNewUsers">0</h4>
+                                            <p>New Users Today</p>
+                                        </div>
+                                    </div>
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-percentage"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="dailyOccupancy">0%</h4>
+                                            <p>Occupancy Rate</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-generate-report">
+                                    <i class="fas fa-file-pdf"></i>
+                                    Generate Daily Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Monthly Report</h3>
+                                <span class="report-date" id="monthlyReportDate"></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="report-stats">
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="monthlyBookings">0</h4>
+                                            <p>Bookings This Month</p>
+                                        </div>
+                                    </div>
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-rupee-sign"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="monthlyRevenue">₹0</h4>
+                                            <p>Revenue This Month</p>
+                                        </div>
+                                    </div>
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="monthlyNewUsers">0</h4>
+                                            <p>New Users This Month</p>
+                                        </div>
+                                    </div>
+                                    <div class="report-stat">
+                                        <div class="report-stat-icon">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div class="report-stat-info">
+                                            <h4 id="monthlyGrowth">+0%</h4>
+                                            <p>Growth Rate</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-generate-report">
+                                    <i class="fas fa-file-pdf"></i>
+                                    Generate Monthly Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="content-card full-width">
+                            <div class="card-header">
+                                <h3>Custom Reports</h3>
+                                <p>Generate custom reports based on specific criteria</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="custom-report-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Report Type</label>
+                                            <select class="form-control">
+                                                <option value="bookings">Bookings Report</option>
+                                                <option value="revenue">Revenue Report</option>
+                                                <option value="users">Users Report</option>
+                                                <option value="occupancy">Occupancy Report</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Date Range</label>
+                                            <select class="form-control">
+                                                <option value="today">Today</option>
+                                                <option value="week">This Week</option>
+                                                <option value="month">This Month</option>
+                                                <option value="custom">Custom Range</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" id="customDateRange" style="display: none;">
+                                        <div class="form-group">
+                                            <label>Start Date</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>End Date</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <button class="btn-generate-custom">
+                                        <i class="fas fa-chart-bar"></i>
+                                        Generate Custom Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settingsTab">
+                    <div class="tab-header">
+                        <h2>System Settings</h2>
+                        <p>Configure library system settings and preferences</p>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Library Settings</h3>
+                            </div>
+                            <div class="card-content">
+                                <form class="settings-form">
+                                    <div class="form-group">
+                                        <label>Library Name</label>
+                                        <input type="text" class="form-control" value="New Drishti Library">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Opening Hours</label>
+                                        <input type="text" class="form-control" value="24/7">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Total Seats</label>
+                                        <input type="number" class="form-control" value="170">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Email</label>
+                                        <input type="email" class="form-control" value="admin@newdrishtilibrary.com">
+                                    </div>
+                                    <button type="submit" class="btn-save-settings">
+                                        <i class="fas fa-save"></i>
+                                        Save Settings
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Pricing Settings</h3>
+                            </div>
+                            <div class="card-content">
+                                <form class="settings-form">
+                                    <div class="form-group">
+                                        <label>Morning Slot (8AM-2PM)</label>
+                                        <input type="number" class="form-control" value="80">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Evening Slot (2PM-8PM)</label>
+                                        <input type="number" class="form-control" value="80">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Full Day (8AM-8PM)</label>
+                                        <input type="number" class="form-control" value="150">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Night Slot (8PM-8AM)</label>
+                                        <input type="number" class="form-control" value="120">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>24 Hours</label>
+                                        <input type="number" class="form-control" value="250">
+                                    </div>
+                                    <button type="submit" class="btn-save-settings">
+                                        <i class="fas fa-save"></i>
+                                        Save Pricing
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>System Maintenance</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="maintenance-actions">
+                                    <button class="btn-maintenance">
+                                        <i class="fas fa-database"></i>
+                                        Backup Database
+                                    </button>
+                                    <button class="btn-maintenance">
+                                        <i class="fas fa-trash"></i>
+                                        Clear Cache
+                                    </button>
+                                    <button class="btn-maintenance">
+                                        <i class="fas fa-sync"></i>
+                                        System Update
+                                    </button>
+                                    <button class="btn-maintenance danger">
+                                        <i class="fas fa-power-off"></i>
+                                        System Restart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Navigation Buttons (for mobile) -->
+    <div class="mobile-tabs">
+        <button class="tab-button active" data-tab="dashboard">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </button>
+        <button class="tab-button" data-tab="bookings">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Bookings</span>
+        </button>
+        <button class="tab-button" data-tab="users">
+            <i class="fas fa-users"></i>
+            <span>Users</span>
+        </button>
+        <button class="tab-button" data-tab="payments">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Payments</span>
+        </button>
+        <button class="tab-button" data-tab="reports">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

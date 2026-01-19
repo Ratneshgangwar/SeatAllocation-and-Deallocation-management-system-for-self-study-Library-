@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - New Drishti Library</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <h2>New <span>Drishti</span></h2>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li class="active">
+                        <a href="student-dashboard.html">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="booking.html">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Book Seat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="bookingHistoryBtn">
+                            <i class="fas fa-history"></i>
+                            <span>Booking History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="profileBtn">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="paymentsBtn">
+                            <i class="fas fa-wallet"></i>
+                            <span>Payments</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Student Dashboard</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <img id="userAvatar" src="https://ui-avatars.com/api/?name=Student+User&background=3498db&color=fff" alt="User">
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name" id="userName">Student User</span>
+                                <span class="user-role">Student</span>
+                            </div>
+                        </div>
+                        <div class="notification-bell">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-count">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Default Dashboard View -->
+                <div id="defaultDashboardView">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalBookingsCount">0</h3>
+                                <p>Total Bookings</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalHoursCount">0</h3>
+                                <p>Hours This Month</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalSpentAmount">₹0</h3>
+                                <p>Total Spent</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Gold</h3>
+                                <p>Membership Tier</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h2>Quick Actions</h2>
+                        <div class="actions-grid">
+                            <a href="booking.html" class="action-card">
+                                <div class="action-icon">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </div>
+                                <h3>Book New Seat</h3>
+                                <p>Reserve your study space</p>
+                            </a>
+                            <a href="#" id="viewHistoryBtn" class="action-card">
+                                <div class="action-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h3>View History</h3>
+                                <p>Check past bookings</p>
+                            </a>
+                            <a href="#" id="makePaymentBtn" class="action-card">
+                                <div class="action-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <h3>Make Payment</h3>
+                                <p>Add funds to wallet</p>
+                            </a>
+                            <a href="#" id="updateProfileBtn" class="action-card">
+                                <div class="action-icon">
+                                    <i class="fas fa-user-edit"></i>
+                                </div>
+                                <h3>Update Profile</h3>
+                                <p>Manage your account</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Bookings -->
+                    <div class="upcoming-bookings">
+                        <div class="section-header">
+                            <h2>Upcoming Bookings</h2>
+                            <a href="#" id="viewAllBookingsBtn" class="view-all">View All</a>
+                        </div>
+                        <div class="bookings-list" id="upcomingBookingsList">
+                            <!-- Bookings will be populated by JavaScript -->
+                            <div class="no-bookings">
+                                <i class="fas fa-calendar-times"></i>
+                                <p>No upcoming bookings</p>
+                                <a href="booking.html" class="btn btn-primary">Book Your First Seat</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking History View (Hidden by default) -->
+                <div id="bookingHistoryView" class="temporary-page" style="display: none;">
+                    <div class="page-header">
+                        <h2>Booking History</h2>
+                        <p>View your past bookings and reservations</p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Your Booking History</h3>
+                            <div class="card-actions">
+                                <button class="btn-export" onclick="exportBookingHistory()">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="no-bookings-message">
+                                <i class="fas fa-history" style="font-size: 64px; color: #bdc3c7; margin-bottom: 20px;"></i>
+                                <h4>No booking history available</h4>
+                                <p>Your past bookings will appear here once you start using the library.</p>
+                                <a href="booking.html" class="btn btn-primary" style="margin-top: 20px;">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Book Your First Seat
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile View (Hidden by default) -->
+                <div id="profileView" class="temporary-page" style="display: none;">
+                    <div class="page-header">
+                        <h2>My Profile</h2>
+                        <p>Manage your account information and preferences</p>
+                    </div>
+                    
+                    <div class="profile-container">
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <div class="profile-avatar">
+                                    <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Student+User&background=3498db&color=fff" alt="Profile">
+                                    <button class="btn-edit-avatar">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                </div>
+                                <div class="profile-info">
+                                    <h3 id="profileName">Student User</h3>
+                                    <p id="profileEmail">student@example.com</p>
+                                    <span class="user-badge">Student Member</span>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-details">
+                                <div class="detail-section">
+                                    <h4>Personal Information</h4>
+                                    <div class="detail-grid">
+                                        <div class="detail-item">
+                                            <label>Full Name</label>
+                                            <span id="profileFullName">Not set</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Phone Number</label>
+                                            <span id="profilePhone">Not set</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Email Address</label>
+                                            <span id="profileEmailText">Not set</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Member Since</label>
+                                            <span id="memberSince">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h4>Education Information</h4>
+                                    <div class="detail-grid">
+                                        <div class="detail-item">
+                                            <label>College/School</label>
+                                            <span id="profileCollege">Not set</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Education Level</label>
+                                            <span id="profileEducation">Not set</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Course/Class</label>
+                                            <span id="profileCourse">Not set</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-actions">
+                                <button class="btn btn-primary" onclick="editProfile()">
+                                    <i class="fas fa-edit"></i>
+                                    Edit Profile
+                                </button>
+                                <button class="btn btn-secondary" onclick="changePassword()">
+                                    <i class="fas fa-lock"></i>
+                                    Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments View (Hidden by default) -->
+                <div id="paymentsView" class="temporary-page" style="display: none;">
+                    <div class="page-header">
+                        <h2>Payments</h2>
+                        <p>Manage your payments and wallet</p>
+                    </div>
+                    
+                    <div class="payments-container">
+                        <div class="wallet-card">
+                            <div class="wallet-header">
+                                <h3>Wallet Balance</h3>
+                                <div class="wallet-amount">
+                                    <span class="amount" id="walletBalance">₹0</span>
+                                    <span class="wallet-status" id="walletStatus">No funds added yet</span>
+                                </div>
+                            </div>
+                            <div class="wallet-actions">
+                                <button class="btn btn-success" onclick="addFunds()">
+                                    <i class="fas fa-plus"></i>
+                                    Add Funds
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewTransactionHistory()">
+                                    <i class="fas fa-history"></i>
+                                    Transaction History
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Recent Transactions</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="no-transactions-message">
+                                    <i class="fas fa-receipt" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+                                    <h4>No transactions yet</h4>
+                                    <p>Your payment history will appear here once you start making payments.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings View (Hidden by default) -->
+                <div id="settingsView" class="temporary-page" style="display: none;">
+                    <div class="page-header">
+                        <h2>Settings</h2>
+                        <p>Configure your account settings and preferences</p>
+                    </div>
+                    
+                    <div class="settings-container">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Account Settings</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="settings-list">
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>Notifications</h4>
+                                            <p>Manage email and push notifications</p>
+                                        </div>
+                                        <div class="setting-action">
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>Privacy Settings</h4>
+                                            <p>Control your privacy preferences</p>
+                                        </div>
+                                        <div class="setting-action">
+                                            <button class="btn btn-outline" onclick="managePrivacy()">
+                                                Manage
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>Language</h4>
+                                            <p>Select your preferred language</p>
+                                        </div>
+                                        <div class="setting-action">
+                                            <select class="form-control">
+                                                <option>English</option>
+                                                <option>Hindi</option>
+                                                <option>Marathi</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Danger Zone</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="danger-actions">
+                                    <button class="btn btn-danger" onclick="deleteAccount()">
+                                        <i class="fas fa-trash"></i>
+                                        Delete Account
+                                    </button>
+                                    <p class="danger-note">Once you delete your account, there is no going back. Please be certain.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Operation completed successfully!</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjKGiYrqK1TlBi0N4aFHEi2WNZdnPy3s8",
+            authDomain: "library-7abcc-f1a9d.firebaseapp.com",
+            projectId: "library-7abcc-f1a9d",
+            storageBucket: "library-7abcc-f1a9d.firebasestorage.app",
+            messagingSenderId: "861023989601",
+            appId: "1:861023989601:web:795656dddb6e0795f05f20"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Firebase collections
+        const firebaseCollections = {
+            USERS: "users",
+            BOOKINGS: "bookings",
+            SEATS: "seats",
+            PAYMENTS: "payments",
+            TIME_SLOTS: "timeSlots"
+        };
+
+        // Enable offline persistence
+        db.enablePersistence()
+          .catch((err) => {
+              console.log("Firebase persistence error: ", err);
+          });
+
+        // Make globally available
+        window.firebase = firebase;
+        window.auth = auth;
+        window.db = db;
+        window.storage = storage;
+        window.firebaseCollections = firebaseCollections;
+
+        console.log("Firebase initialized successfully");
+    </script>
+
+    <!-- Dashboard JavaScript -->
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
